@@ -1,12 +1,12 @@
 #ifdef
 #include "LPC17xx.h"
-#include "adc.h"
-#include "dca.h"
-#include "dma.h"
-#include "eint.h"
-#include "gpio.h"
-#include "timers.h"
-#include "uart.h"
+#include "inc/adc.h"
+#include "inc/dca.h"
+#include "inc/dma.h"
+#include "inc/eint.h"
+#include "inc/gpio.h"
+#include "inc/timers.h"
+#include "inc/uart.h"
 #endif
 
 //insert defines
@@ -16,6 +16,7 @@ int main(void) {
     //initial settings
     gpioconfig();
     gpioIntConfig();
+    extIntConfig();
 
     while(1){
        //insert main code 
