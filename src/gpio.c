@@ -32,6 +32,7 @@ void gpioConfig(void){
 
     LPC_GPIO0 -> FIODIR |= (1);
     LPC_PINCON -> PINMODE0 |= (1<<1);
+    LPC_GPIO0 -> FIOCLR |= 1;
     //numberpad outputs
     LPC_GPIO2 -> FIODIR |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;
 

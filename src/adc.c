@@ -19,12 +19,11 @@ void adcConfig(void){
 
 void ADC_IRQHandler(void){
 	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;
-	if(adc0Value > 0x9B0){ // 2V sensed from MQ135 aprox
-		if(state == 1){ // state == 1 means alarm is activated
-			//play alarm sound (init dac)
-		}
-
-
+	if(adc0Value > 0x8F7){ // 1,85V sensed from MQ135 aprox
+		LPC_GPIO0 -> FIOSET |= 1;
+	}
+	else{
+		LPC_GPIO0 -> FIOCLR |= 1;
 	}
 	LPC_ADC->ADGDR &= LPC_ADC->ADGDR; // clean flag
 	return;

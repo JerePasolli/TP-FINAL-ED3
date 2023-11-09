@@ -1,8 +1,8 @@
 #include "LPC17xx.h"
 #include "../inc/adc.h"
-//#include "../inc/dca.h"
+#include "../inc/dac.h"
 #include "../inc/delay.h"
-//#include "../inc/dma.h"
+#include "../inc/dma.h"
 //#include "../inc/eint.h"
 #include "../inc/gpio.h"
 #include "../inc/adc.h"
@@ -16,6 +16,7 @@ char key;
 uint8_t status = 0;
 uint8_t position = 0;
 uint8_t incorrectPassword = 0;
+
 //uint8_t position = 0;
 
 int main(void) {
@@ -25,10 +26,19 @@ int main(void) {
     //initial settings
     gpioConfig();
     adcConfig();
+    timerConfig();
+    dacConfig();
+    dmaConfig();
     //gpioIntConfig();
     //extIntConfig();
 
     while(1){
+    	/*if(status == 1){
+    		LPC_GPIO0 -> FIOSET |= 1;
+    	}
+    	else{
+    		LPC_GPIO0 -> FIOCLR |= 1;
+    	}*/
     	key = readKeyboard();
     	        if (key != '\0') {
     	        	LPC_GPIO0->FIOSET |= 1;
