@@ -18,8 +18,8 @@ void extIntConfig(void){
     //clearing flag
     LPC_SC -> EXTINT |= (0x3); 
     //enable interruptions
-    NVIC_Enable(EINT0_IRQn); 
-    NVIC_Enable(EINT1_IRQn); 
+    NVIC_EnableIRQ(EINT0_IRQn);
+    NVIC_EnableIRQ(EINT1_IRQn);
     return;
 }
 
@@ -40,6 +40,6 @@ void EINT1_IRQHandler(void){
 //gpio interrupting on EINT3
 void EINT3_IRQHandler(void){
     //insert code
-    LPC_GPIOINT -> IO0IntClr |= (X); //clearing flag
+    //LPC_GPIOINT -> IO0IntClr |= (X); //clearing flag
     return;
 }
