@@ -2,3 +2,4 @@
 
 void gpioConfig(void);
 void gpioIntConfig(void);
+void readKeyboard(void);

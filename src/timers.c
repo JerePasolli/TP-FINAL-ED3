@@ -1,9 +1,9 @@
-#include <inc/timers.h>
+#include <timers.h>
 #include "LPC17xx.h"
 #include "lpc17xx_timer.h"
 
 #define PRESCALER 1000000
-#define MATCHER 5
+#define MATCHER 2
 
 void timerConfig(void){
 
@@ -14,7 +14,7 @@ void timerConfig(void){
 	TIM_MATCHCFG_Type matchCfg;
 		matchCfg.ExtMatchOutputType = TIM_EXTMATCH_TOGGLE;
 		matchCfg.IntOnMatch = DISABLE;
-		matchCfg.MatchChannel = 0;
+		matchCfg.MatchChannel = 1;
 		matchCfg.MatchValue = MATCHER-1;
 		matchCfg.ResetOnMatch = ENABLE;
 		matchCfg.StopOnMatch = DISABLE;
