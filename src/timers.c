@@ -1,9 +1,9 @@
-#include <timers.h>
+#include <../inc/timers.h>
 #include "LPC17xx.h"
 #include "lpc17xx_timer.h"
 
 #define PRESCALER 1000000
-#define MATCHER 2
+#define MATCHER 4
 
 void timerConfig(void){
 
