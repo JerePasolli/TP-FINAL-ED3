@@ -1,5 +1,5 @@
 #include "LPC17xx.h"
-#include "dac.h"
+#include "../inc/dac.h"
 #include "lpc17xx_dac.h"
 
 #define SINE_FREQ_IN_HZ 100

@@ -1,7 +1,7 @@
 
 #include "LPC17xx.h"
-#include "gpio.h"
-#include "delay.h"
+#include "../inc/gpio.h"
+#include "../inc/delay.h"
 
 
 #define INPUT1 (1<<4)
@@ -41,7 +41,7 @@ void gpioConfig(void){
     return;
 }
 
-void gpioIntConfig(void){
+/*void gpioIntConfig(void){
     //to do: check later edge
     //GPIO interrupt configuration
 	//falling edge for inputs
@@ -53,7 +53,7 @@ void gpioIntConfig(void){
     NVIC_EnableIRQ(EINT3_IRQn);
 
     return;
-}
+}*/
 
 char readKeyboard(void) {
     char keys[ROWS][COLS] = {

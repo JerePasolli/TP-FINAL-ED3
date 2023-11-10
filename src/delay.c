@@ -1,5 +1,5 @@
 #include "LPC17xx.h"
-#include "delay.h"
+#include "../inc/delay.h"
 
 void delay (uint32_t time){
     uint32_t counter;

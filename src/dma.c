@@ -1,5 +1,5 @@
 #include "LPC17xx.h"
-#include "dma.h"
+#include "../inc/dma.h"
 #include "lpc17xx_gpdma.h"
 
 #define DMA_SIZE 60
