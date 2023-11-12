@@ -38,14 +38,14 @@ int main(void) {
 
     //initial settings
     gpioConfig();
-    adcConfig();
-    timerConfig();
+    //adcConfig();
+    //timerConfig();
     //dmaConfig();
     //dacConfig();
 
-    //uartConfig();
+    uartConfig();
     //gpioIntConfig();
-    extIntConfig();
+    //extIntConfig();
 
     while(1){
     	if((status == ACTIVE)||(status == RINGING)){
@@ -70,11 +70,11 @@ int main(void) {
 				else{
 					if(status == OFF){
 						status = ACTIVE;
-						//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,1);
+						UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);
 					}
 					else{
 						status = OFF;
-						//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,0);
+						UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);
 						//GPDMA_ChannelCmd(0,DISABLE);
 						//DAC_UpdateValue(LPC_DAC, 0);
 					}
