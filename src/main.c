@@ -35,47 +35,44 @@ void EINT0_IRQHandler(void);
 void EINT1_IRQHandler(void);
 
 int main(void) {
-
-    //initial settings
     gpioConfig();
     adcConfig();
     timerConfig();
     dacConfig();
     dmaConfig();
     uartConfig();
-    //gpioIntConfig();
-    //extIntConfig();
+    extIntConfig();
 
     while(1){
-    	if((status == ACTIVE)||(status == RINGING)){
-    		LPC_GPIO0 -> FIOSET |= 1;
+    	if((status == ACTIVE)||(status == RINGING)){				//if the alarm is active or ringing
+    		LPC_GPIO0 -> FIOSET |= 1;								//turn on the led
     	}
-    	else{
-    		LPC_GPIO0 -> FIOCLR |= 1;
+    	else{														//if the alarm is off
+    		LPC_GPIO0 -> FIOCLR |= 1;								//turn off the led
     	}
     	bytesReceived = UART_Receive((LPC_UART_TypeDef*)LPC_UART1,(uint8_t*)dataReceived,sizeof(dataReceived),NONE_BLOCKING);
     	key = readKeyboard();
-		if (key != '\0') {
-			inputPassword[position] = key;
-			if (position == 3){
+		if (key != '\0') {											//ignore if null character
+			inputPassword[position] = key;							//save the key pressed
+			if (position == 3){										//check if correct at the end of the password
 				for(uint8_t i = 0; i < 4; i++){
 					if(inputPassword[i] != password[i]){
 						incorrectPassword = 1;
 					}
 				}
-				if(incorrectPassword){
+				if(incorrectPassword){				
 					incorrectPassword = 0;
 				}
 				else{
-					if(status == OFF){
+					if(status == OFF){									//if the password is correct, turn on the alarm
 						status = ACTIVE;
-						UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,1);
+						UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,1);	//send the status information via the UART
 					}
 					else{
-						status = OFF;
-						UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,0);
-						GPDMA_ChannelCmd(0,DISABLE);
-						DAC_UpdateValue(LPC_DAC, 0);
+						status = OFF;									//if the password is correct, turn off the alarm
+						UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,0);	//send the status information via UART
+						GPDMA_ChannelCmd(0,DISABLE);					//turn off DMA channel
+						DAC_UpdateValue(LPC_DAC, 0);					//turn off the buzzer connected via DAC
 					}
 				}
 			}
@@ -88,9 +85,9 @@ int main(void) {
     return 0;
 }
 
-void ADC_IRQHandler(void){
-	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;
-	if(adc0Value > 0x8F7){ // 1,85V sensed from MQ135 aprox
+void ADC_IRQHandler(void){										//handler for ADC interrupt
+	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;					
+	if(adc0Value > 0x8F7){ 										// 1,85V sensed from MQ135 approx
 		status = RINGING;
 		UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
 		GPDMA_ChannelCmd(0,ENABLE);
