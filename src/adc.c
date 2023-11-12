@@ -11,6 +11,7 @@ void adcConfig(void){
 	ADC_StartCmd(LPC_ADC,ADC_START_ON_MAT01);					//select match channel 1
 	ADC_ChannelCmd(LPC_ADC,0,ENABLE);							//enable adc channel 0
 	ADC_EdgeStartConfig(LPC_ADC,ADC_START_ON_RISING);			//choose rising edge
-	ADC_IntConfig(LPC_ADC,ADC_ADINTEN0,SET);					//enable interruptions for channel 0
+	ADC_IntConfig(LPC_ADC,ADC_ADINTEN0,SET);
+	NVIC_SetPriority(ADC_IRQn,0);
 	NVIC_EnableIRQ(ADC_IRQn);									//enable interruptions for adc in NVIC
 }

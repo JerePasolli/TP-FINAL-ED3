@@ -12,6 +12,7 @@
 #include "lpc17xx_gpdma.h"
 #include "lpc17xx_dac.h"
 #include "lpc17xx_uart.h"
+#include "lpc17xx_timer.h"
 //#include "lpc17xx_"
 
 //Global Variables
@@ -25,6 +26,10 @@ volatile char inputPassword[4];
 //volatile char dataReceived[4];
 volatile char key;
 volatile uint8_t status = 0;
+volatile uint8_t statusChange = 0;
+uint8_t message1[] = "Alarm off";
+uint8_t message2[] = "Alarm on";
+uint8_t message3[] = "Alarm ringing";
 volatile uint8_t position = 0;
 volatile uint8_t incorrectPassword = 0;
 volatile uint16_t adc0Value;
@@ -33,13 +38,14 @@ volatile uint16_t adc0Value;
 void ADC_IRQHandler(void);
 void EINT0_IRQHandler(void);
 void EINT1_IRQHandler(void);
+void TIMER1_IRQHandler(void);
 
 int main(void) {
 
     //initial settings
     gpioConfig();
     //adcConfig();
-    //timerConfig();
+    timerConfig();
     //dmaConfig();
     //dacConfig();
 
@@ -53,7 +59,8 @@ int main(void) {
     	}
     	else{
     		LPC_GPIO0 -> FIOCLR |= (1<<18);
-    	}
+		}
+
     	//bytesReceived = UART_Receive((LPC_UART_TypeDef*)LPC_UART1,(uint8_t*)dataReceived,sizeof(dataReceived),NONE_BLOCKING);
     	key = readKeyboard();
 		if (key != '\0') {
@@ -70,14 +77,13 @@ int main(void) {
 				else{
 					if(status == OFF){
 						status = ACTIVE;
-						UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);
 					}
 					else{
 						status = OFF;
-						UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);
 						//GPDMA_ChannelCmd(0,DISABLE);
 						//DAC_UpdateValue(LPC_DAC, 0);
 					}
+					statusChange = 1;
 				}
 			}
 			position ++;
@@ -122,5 +128,20 @@ void EINT1_IRQHandler(void){
 	}
     //insert code
 	LPC_SC -> EXTINT |= EINT1; //clearing flag
+    return;
+}
+
+void TIMER1_IRQHandler(void){
+	if (statusChange){
+		if(status == OFF )
+			UART_Send(LPC_UART2, message1, sizeof(message1), BLOCKING);
+		else if (status == ACTIVE)
+			UART_Send(LPC_UART2, message2, sizeof(message2), BLOCKING);
+		else
+			UART_Send(LPC_UART2, message3, sizeof(message3), BLOCKING);
+	}
+	statusChange = 0;
+
+	TIM_ClearIntPending(LPC_TIM1, TIM_MR1_INT);
     return;
 }
