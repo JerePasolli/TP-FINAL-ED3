@@ -66,11 +66,11 @@ int main(void) {
 				else{
 					if(status == OFF){									//if the password is correct, turn on the alarm
 						status = ACTIVE;
-						UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,1);	//send the status information via the UART
+						UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);//send the status information via the UART
 					}
 					else{
 						status = OFF;									//if the password is correct, turn off the alarm
-						UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,0);	//send the status information via UART
+						UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);//send the status information via UART
 						GPDMA_ChannelCmd(0,DISABLE);					//turn off DMA channel
 						DAC_UpdateValue(LPC_DAC, 0);					//turn off the buzzer connected via DAC
 					}
@@ -89,7 +89,7 @@ void ADC_IRQHandler(void){										//handler for ADC interrupt
 	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;					
 	if(adc0Value > 0x8F7){ 										// 1,85V sensed from MQ135 approx
 		status = RINGING;
-		UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
+		UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);
 		GPDMA_ChannelCmd(0,ENABLE);
 	}
 	LPC_ADC->ADGDR &= LPC_ADC->ADGDR; // clean flag
@@ -101,7 +101,7 @@ void EINT0_IRQHandler(void){
     //insert code
 	if(status == ACTIVE){
 		status = RINGING;
-		UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
+		UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);
 		GPDMA_ChannelCmd(0,ENABLE);
 	}
     LPC_SC -> EXTINT |= EINT0; //clearing flag
@@ -112,7 +112,7 @@ void EINT0_IRQHandler(void){
 void EINT1_IRQHandler(void){
 	if(status == ACTIVE){
 		status = RINGING;
-		UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
+		UART_Send(LPC_UART1, status, sizeof(status), NONE_BLOCKING);
 		GPDMA_ChannelCmd(0,ENABLE);
 	}
     //insert code

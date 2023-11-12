@@ -29,7 +29,7 @@ void gpioConfig(void){
     LPC_GPIO0 -> FIODIR |= (LED);                                   //set led pin as output 
     LPC_GPIO0 -> FIOCLR |= 1;                                       //clear led
     return;
-}
+}*/
 
 char readKeyboard(void) {
     char keys[ROWS][COLS] = {                                       //keyboard layout
@@ -41,6 +41,7 @@ char readKeyboard(void) {
 
     for (int row = 0; row < ROWS; row++) {                          //check which key has been pressed
         LPC_GPIO2->FIOCLR |= ROW_PINS[row];                         //enable row
+        delay(10000);
         for (int col = 0; col < COLS; col++) {                      //check columns
             if (!(LPC_GPIO2->FIOPIN & COL_PINS[col])) {             //check if there are a key pressed in the selected column
             	delay(10000000);
