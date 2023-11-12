@@ -19,8 +19,9 @@ La misma cuenta con:
 
 ## Pin-out
 
-- P0.0  : UART - Receptor
-- P0.1  : UART - Transmisor
+- P0.10 : UART - Receptor
+- P0.11 : UART - Transmisor
+- P0.18 : LED para mostrar estado de la alarma
 - P0.23 : ADC para el sensor de gases
 - P0.26 : DAC para el buzzer que provoca el sonido de alarma
 - P2.0  : salida del teclado matricial
@@ -32,5 +33,15 @@ La misma cuenta con:
 - P2.6  : entrada del teclado matricial
 - P2.10 : EINT0 para un sensor de movimiento
 - P2.11 : EINT1 para otro sensor de movimiento
+- Conexión a tierra de ambos lados de la placa
+- Conexión externa a batería de 5V
+
+![image](./lib/pin-out.png)
+
+
+
+
+
+
 
 
