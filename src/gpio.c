@@ -68,12 +68,12 @@ char readKeyboard(void) {
     for (int row = 0; row < ROWS; row++) {
         // row enable
         LPC_GPIO2->FIOCLR |= ROW_PINS[row];
-        delay(10000);
+        //delay(10000);
 
         // check columns
         for (int col = 0; col < COLS; col++) {
             if (!(LPC_GPIO2->FIOPIN & COL_PINS[col])) {
-            	delay(10000000);
+            	delay(1000000*4);
                 return keys[row][col];
             }
         }

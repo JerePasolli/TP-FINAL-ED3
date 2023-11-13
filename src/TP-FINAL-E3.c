@@ -44,14 +44,14 @@ int main(void) {
 
     //initial settings
     gpioConfig();
-    //adcConfig();
+    adcConfig();
     timerConfig();
     //dmaConfig();
     //dacConfig();
 
     uartConfig();
     //gpioIntConfig();
-    //extIntConfig();
+    extIntConfig();
 
     while(1){
     	if((status == ACTIVE)||(status == RINGING)){
@@ -97,9 +97,13 @@ int main(void) {
 
 void ADC_IRQHandler(void){
 	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;
-	if(adc0Value > 0x8F7){ // 1,85V sensed from MQ135 aprox
-		if(status == ACTIVE)
+	if(adc0Value > 0x6D6){ //  sensed from MQ135 aprox
+		if(status == ACTIVE){
 			status = RINGING;
+			statusChange = 1;
+		   GPDMA_ChannelCmd(0,ENABLE);
+		}
+
 		//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
 		//GPDMA_ChannelCmd(0,ENABLE);
 	}
@@ -112,6 +116,7 @@ void EINT0_IRQHandler(void){
     //insert code
 	if(status == ACTIVE){
 		status = RINGING;
+		statusChange = 1;
 		//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
 		//GPDMA_ChannelCmd(0,ENABLE);
 	}
@@ -123,6 +128,7 @@ void EINT0_IRQHandler(void){
 void EINT1_IRQHandler(void){
 	if(status == ACTIVE){
 		status = RINGING;
+		statusChange = 1;
 		//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
 		//GPDMA_ChannelCmd(0,ENABLE);
 	}

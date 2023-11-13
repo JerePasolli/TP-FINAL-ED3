@@ -36,7 +36,7 @@ void timerConfig(void){
 		matchCfg2.ResetOnMatch = ENABLE;
 		matchCfg2.StopOnMatch = DISABLE;
 
-		TIM_Init(LPC_TIM1, TIM_TIMER_MODE, (void*) &timCfg2);
+		TIM_Init(LPC_TIM1, TIM_TIMER_MODE, &timCfg2);
 		TIM_ConfigMatch(LPC_TIM1, &matchCfg2);
 		TIM_Cmd(LPC_TIM1, ENABLE);
 		TIM_ClearIntPending(LPC_TIM1, TIM_MR1_INT);
