@@ -12,6 +12,7 @@
 #include "lpc17xx_gpdma.h"
 #include "lpc17xx_dac.h"
 #include "lpc17xx_uart.h"
+#include "lpc17xx_timer.h"
 
 //Global Variables
 #define OFF 0
@@ -97,7 +98,7 @@ int main(void) {
 
 void ADC_IRQHandler(void){
 	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;
-	if(adc0Value > 0x6D6){ //  sensed from MQ135 aprox
+	if(adc0Value > 0x0x384){ //  sensed from MQ135 aprox
 		if(status == ACTIVE){
 			status = RINGING;
 			statusChange = 1;
