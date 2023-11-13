@@ -4,7 +4,7 @@
 
 #define PRESCALER 1000000
 #define MATCHER 4
-#define MATCHER2 5
+#define MATCHER2 3
 
 void timerConfig(void){
 
@@ -20,7 +20,7 @@ void timerConfig(void){
 		matchCfg.ResetOnMatch = ENABLE;
 		matchCfg.StopOnMatch = DISABLE;
 
-	TIM_Init(LPC_TIM0, TIM_TIMER_MODE, (void*) &timCfg);
+	TIM_Init(LPC_TIM0, TIM_TIMER_MODE, &timCfg);
 	TIM_ConfigMatch(LPC_TIM0, &matchCfg);
 	TIM_Cmd(LPC_TIM0, ENABLE);
 
