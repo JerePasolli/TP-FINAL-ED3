@@ -98,30 +98,26 @@ int main(void) {
 
 void ADC_IRQHandler(void){
 	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;
-	if(adc0Value > 0x0x384){ //  sensed from MQ135 aprox
+	if(adc0Value > 0x0x384){ 				//sensed from MQ135 aprox
 		if(status == ACTIVE){
 			status = RINGING;
 			statusChange = 1;
 		   GPDMA_ChannelCmd(0,ENABLE);
 		}
-
-		//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
-		//GPDMA_ChannelCmd(0,ENABLE);
 	}
-	LPC_ADC->ADGDR &= LPC_ADC->ADGDR; // clean flag
+	LPC_ADC->ADGDR &= LPC_ADC->ADGDR; 		// clear flag
 	return;
 }
 
 //external interrupt on EINT0
 void EINT0_IRQHandler(void){
-    //insert code
 	if(status == ACTIVE){
 		status = RINGING;
 		statusChange = 1;
 		UART_Send(LPC_UART2, status, sizeof(status), NONE_BLOCKING);
 		GPDMA_ChannelCmd(0,ENABLE);
 	}
-    LPC_SC -> EXTINT |= EINT0; //clearing flag
+    LPC_SC -> EXTINT |= EINT0; 				//clear flag
     return;
 }
 
@@ -133,8 +129,7 @@ void EINT1_IRQHandler(void){
 		UART_Send(LPC_UART2, status, sizeof(status), NONE_BLOCKING);
 		GPDMA_ChannelCmd(0,ENABLE);
 	}
-    //insert code
-	LPC_SC -> EXTINT |= EINT1; //clearing flag
+	LPC_SC -> EXTINT |= EINT1; 				//clear flag
     return;
 }
 
@@ -148,7 +143,7 @@ void UART2_IRQHandler(void){
 		tmp1 = UART_GetLineStatus(LPC_UART2);
 		tmp1 &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE | UART_LSR_BI | UART_LSR_RXFE);
 		if(tmp1){
-			while(1); //codigo de manejo de error, para que no se clave aca
+			while(1); 						//UART error handling code
 		}
 	}
 
@@ -167,8 +162,6 @@ void UART2_IRQHandler(void){
 			}
 			else{
 				status = OFF;
-				//GPDMA_ChannelCmd(0,DISABLE);
-				//DAC_UpdateValue(LPC_DAC, 0);
 			}
 			statusChange = 1;
 		}

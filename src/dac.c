@@ -15,10 +15,9 @@ void dacConfig(void)
 	DAC_Init(LPC_DAC);
 	dacCfg.CNT_ENA = ENABLE;														//enable timeout counter
 	dacCfg.DMA_ENA = ENABLE;														//enable DMA burst
-	//LPC_DAC->DACR &= ~(1<<16);
 	//initialize DAC
-	uint32_t tmp;																//timeout setup
+	uint32_t tmp;																	//timeout setup
 	tmp = (PCLK_DAC_IN_MHZ * 1000000)/(SINE_FREQ_IN_HZ * NUM_SINE_SAMPLE);
-	DAC_SetDMATimeOut(LPC_DAC, tmp);											//set reload value
-	DAC_ConfigDAConverterControl(LPC_DAC, &dacCfg);								//DAC enable
+	DAC_SetDMATimeOut(LPC_DAC, tmp);												//set reload value
+	DAC_ConfigDAConverterControl(LPC_DAC, &dacCfg);									//DAC enable
 }

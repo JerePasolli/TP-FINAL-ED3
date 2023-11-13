@@ -24,32 +24,17 @@ void gpioConfig(void){
     LPC_GPIO2 -> FIODIR &= ~(INPUT2);
     LPC_GPIO2 -> FIODIR &= ~(INPUT3);
 
-    //P018 as digitsal output for led
-    LPC_GPIO0 -> FIODIR |= (1<<18);
+    
+    LPC_GPIO0 -> FIODIR |= (1<<18);                                 //P0.18 as digitsal output for led
     LPC_PINCON -> PINMODE1 |= (1<<5);
     LPC_GPIO0 -> FIOCLR |= (1<<18);
-    //numberpad outputs
-    LPC_GPIO2 -> FIODIR |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;
+    LPC_GPIO2 -> FIODIR |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;   //numberpad outputs
 
     LPC_GPIO2 -> FIOSET |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;
     LPC_GPIO2 -> FIOSET |= INPUT1 | INPUT2 | INPUT3;
 
     return;
 }
-
-/*void gpioIntConfig(void){
-    //to do: check later edge
-    //GPIO interrupt configuration
-	//falling edge for inputs
-    LPC_GPIOINT -> IO0IntEnF |= INPUT1 | INPUT2 | INPUT3;
-
-    //clear flags
-    LPC_GPIOINT -> IO0IntClr |= INPUT1 | INPUT2 | INPUT3;
-    //enable interruption
-    NVIC_EnableIRQ(EINT3_IRQn);
-
-    return;
-}*/
 
 char readKeyboard(void) {
     char keys[ROWS][COLS] = {                                       //keyboard layout
@@ -60,12 +45,8 @@ char readKeyboard(void) {
     };
 
     for (int row = 0; row < ROWS; row++) {
-        // row enable
-        LPC_GPIO2->FIOCLR |= ROW_PINS[row];
-        //delay(10000);
-
-        // check columns
-        for (int col = 0; col < COLS; col++) {
+        LPC_GPIO2->FIOCLR |= ROW_PINS[row];                         // row enable
+        for (int col = 0; col < COLS; col++) {                      // check columns
             if (!(LPC_GPIO2->FIOPIN & COL_PINS[col])) {
             	delay(1000000*4);
                 return keys[row][col];
