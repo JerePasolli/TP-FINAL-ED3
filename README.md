@@ -38,7 +38,35 @@ La misma cuenta con:
 
 ![image](./lib/pin-out.png)
 
+## Implementaciones
 
+### ADC
+
+Se utiliza el módulo ADC para un sensor de gases MQ-135, que sensa, cuando la alarma está encendida, la concentración de gases en el ambiente. De detectar algo peligroso, hace sonar la alarma.
+
+### DAC
+
+Se utiliza el módulo DAC con un buzzer, que emite un sonido de alarma cuando esta se dispara. Este módulo está conectado con el ADC (que lo dispara) y con el DMA.
+
+### DMA
+
+Este módulo se ocupa de la señal a emitir por el DAC mientras el core puede estar atento al teclado que lo desactiva.
+
+### EINT
+
+Se utilizan dos pulsadores para simular sensores de movimiento, mediante interrupciones externas que se disparan al pulsarlos.
+
+### GPIO
+
+Se utiliza el GPIO para controlar un teclado matricial de 3x4 mediante polling. Este teclado activa y desactiva la alarma. Además, existe un LED indicador que se prende cuando la alarma está encendida.
+
+### Timers
+
+Se utilizan los timers 0 y 1. Con el timer 0, se manejan las interrupciones externas, mientras que con el timer 1, se controla al UART.
+
+### UART
+
+Se ha usado un módulo HC-05 para la transmisión bidireccional mediante Bluetooth. A través de él, se puede encender y apagar la alarma, y recibir información sobre su estado.
 
 
 
