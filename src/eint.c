@@ -13,6 +13,8 @@ void extIntConfig(void){
     //clearing flag
     LPC_SC -> EXTINT |= (0x3); 
     //enable interruptions
+	NVIC_SetPriority(EINT0_IRQn, 1);
+	NVIC_SetPriority(EINT1_IRQn, 1);
     NVIC_EnableIRQ(EINT0_IRQn);
     NVIC_EnableIRQ(EINT1_IRQn);
     return;

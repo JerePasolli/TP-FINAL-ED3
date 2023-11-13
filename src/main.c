@@ -30,6 +30,7 @@ volatile uint8_t statusChange = 0;
 uint8_t message1[] = "Alarm off";
 uint8_t message2[] = "Alarm on";
 uint8_t message3[] = "Alarm ringing";
+uint8_t message4[] = "Wrong Password";
 uint8_t received[1] = "";
 uint8_t uartPassword[4];
 volatile uint8_t position = 0;
@@ -73,6 +74,8 @@ int main(void) {
 				}
 				if(incorrectPassword){
 					incorrectPassword = 0;
+					UART_Send(LPC_UART2, message4, sizeof(message4), BLOCKING);
+
 				}
 				else{
 					if(status == OFF){
@@ -101,11 +104,9 @@ void ADC_IRQHandler(void){
 		if(status == ACTIVE){
 			status = RINGING;
 			statusChange = 1;
+			dmaConfig();
 		    GPDMA_ChannelCmd(0,ENABLE);
 		}
-
-		//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
-		//GPDMA_ChannelCmd(0,ENABLE);
 	}
 	LPC_ADC->ADGDR &= LPC_ADC->ADGDR; // clean flag
 	return;
@@ -117,8 +118,8 @@ void EINT0_IRQHandler(void){
 	if(status == ACTIVE){
 		status = RINGING;
 		statusChange = 1;
-		//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
-		//GPDMA_ChannelCmd(0,ENABLE);
+		dmaConfig();
+		GPDMA_ChannelCmd(0,ENABLE);
 	}
     LPC_SC -> EXTINT |= EINT0; //clearing flag
     return;
@@ -129,8 +130,8 @@ void EINT1_IRQHandler(void){
 	if(status == ACTIVE){
 		status = RINGING;
 		statusChange = 1;
-		//UART_SendByte((LPC_UART_TypeDef*)LPC_UART1,2);
-		//GPDMA_ChannelCmd(0,ENABLE);
+		dmaConfig();
+		GPDMA_ChannelCmd(0,ENABLE);
 	}
     //insert code
 	LPC_SC -> EXTINT |= EINT1; //clearing flag
@@ -189,3 +190,5 @@ void TIMER1_IRQHandler(void){
 	TIM_ClearIntPending(LPC_TIM1, TIM_MR1_INT);
     return;
 }
+
+
