@@ -5,6 +5,7 @@
 #define PRESCALER 1000000
 #define MATCHER 4
 #define MATCHER2 5
+#define PRESCALE3 (25-1)
 
 void timerConfig(void){
 	TIM_TIMERCFG_Type timCfg;								//timer configuration structure
@@ -52,4 +53,24 @@ void timerConfig(void){
 
 
     return;
+}
+
+
+void initTimer2(void) //PCLK must be = 25Mhz!
+{
+	LPC_TIM2->CTCR = 0x0;
+	LPC_TIM2->PR = PRESCALE3; //Increment TC at every 24999+1 clock cycles
+	LPC_TIM2->TCR = 0x02; //Reset Timer
+}
+
+void startTimer2(void)
+{
+	LPC_TIM2->TCR = 0x02; //Reset Timer
+	LPC_TIM2->TCR = 0x01; //Enable timer
+}
+
+unsigned int stopTimer2(void)
+{
+	LPC_TIM2->TCR = 0x00; //Disable timer
+	return LPC_TIM2->TC;
 }

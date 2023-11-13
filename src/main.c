@@ -29,6 +29,7 @@ uint8_t message2[] = "Alarm on";
 uint8_t message3[] = "Alarm ringing";
 uint8_t received[1] = "";
 uint8_t uartPassword[4];
+volatile uint8_t movement = 0;
 volatile uint8_t position = 0;
 volatile uint8_t incorrectPassword = 0;
 volatile uint16_t adc0Value;
@@ -47,6 +48,7 @@ int main(void) {
     dmaConfig();
     uartConfig();
     extIntConfig();
+	initTimer2();
 
     while(1){
     	if((status == ACTIVE)||(status == RINGING)){				//if the alarm is active or ringing
@@ -83,6 +85,11 @@ int main(void) {
 			if(position == 4){
 				position = 0;
 			}
+		}
+		sensorTrigger();
+		movement = echo_monitor();
+		if(movement){
+			status = RINGING;
 		}
     }
     return 0;
