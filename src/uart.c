@@ -19,5 +19,8 @@ void uartConfig(void){
 	UART_FIFOConfigStructInit(&uartFIFOConfig);
 	UART_FIFOConfig(LPC_UART2, &uartFIFOConfig);
 	UART_TxCmd(LPC_UART2, ENABLE);
+	UART_IntConfig(LPC_UART2,  UART_INTCFG_RBR, ENABLE);
+	UART_IntConfig(LPC_UART2,  UART_INTCFG_RLS, ENABLE);
+	NVIC_EnableIRQ(UART2_IRQn);
 }
 

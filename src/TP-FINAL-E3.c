@@ -30,6 +30,7 @@ volatile uint8_t statusChange = 0;
 uint8_t message1[] = "Alarm off";
 uint8_t message2[] = "Alarm on";
 uint8_t message3[] = "Alarm ringing";
+uint8_t received[] = "";
 volatile uint8_t position = 0;
 volatile uint8_t incorrectPassword = 0;
 volatile uint16_t adc0Value;
@@ -135,6 +136,24 @@ void EINT1_IRQHandler(void){
     //insert code
 	LPC_SC -> EXTINT |= EINT1; //clearing flag
     return;
+}
+
+void UART2_IRQHandler(void){
+	uint32_t intsrc, tmp, tmp1;
+	intsrc = UART_GetIntId(LPC_UART2);
+	tmp = intsrc & UART_IIR_INTID_MASK;
+
+	if(tmp == UART_IIR_INTID_RLS){
+		tmp1 = UART_GetLineStatus(LPC_UART2);
+		tmp1 &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE | UART_LSR_BI | UART_LSR_RXFE);
+		if(tmp1){
+			while(1); //codigo de manejo de error, para que no se clave aca
+		}
+	}
+
+	if((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI)){
+		UART_Receive(LPC_UART2, received, sizeof(received), NONE_BLOCKING);
+	}
 }
 
 void TIMER1_IRQHandler(void){
