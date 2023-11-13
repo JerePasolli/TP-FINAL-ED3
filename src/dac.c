@@ -10,8 +10,8 @@ DAC_CONVERTER_CFG_Type dacCfg;
 void dacConfig(void)
 {
     //DAC configuration structure
-	dacCfg.CNT_ENA = ENABLE;														//enable timeout counter
-	dacCfg.DMA_ENA = ENABLE;														//enable DMA burst
+dacCfg.CNT_ENA = ENABLE;														//enable timeout counter
+dacCfg.DMA_ENA = ENABLE;														//enable DMA burst
 	DAC_Init(LPC_DAC);															//initialize DAC
 	uint32_t tmp;																//timeout setup
 	tmp = (PCLK_DAC_IN_MHZ * 1000000)/(SINE_FREQ_IN_HZ * NUM_SINE_SAMPLE);		

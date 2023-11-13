@@ -10,11 +10,11 @@ uint32_t sin[NUM_SINE_SAMPLE]={32768, 36160, 39552, 42880, 46080, 49152, 51968, 
 , 57088, 54656, 51968, 49152, 46080, 42880, 39552, 36160, 32768, 29376, 25984, 22656
 , 19456, 16384, 13568, 10880, 8448, 6272, 4416, 2880, 1664, 768, 192, 0, 192, 768, 1664
 , 2880, 4416, 6272, 8448, 10880, 13568, 16384, 19456, 22656, 25984, 29376};							//sample sine function
-GPDMA_LLI_Type LLI1;										//Linked List Item structure
-GPDMA_Channel_CFG_Type GPDMACfg;							//GPDMA configuration structure
+
 
 void dmaConfig()
 {
+	GPDMA_LLI_Type LLI1;									//Linked List Item structure
 	LLI1.SrcAddr = (uint32_t) sin;							//source address
 	LLI1.DstAddr = (uint32_t) &LPC_DAC->DACR;				//destination address
 	LLI1.NextLLI = (uint32_t) &LLI1;						//next LLI address
@@ -23,6 +23,8 @@ void dmaConfig()
 				   | (2<<21) 								//destination width 32 bits
 				   | (1<<26); 								//source increment
 	GPDMA_Init();											//initialize GPDMA
+
+	GPDMA_Channel_CFG_Type GPDMACfg;						//GPDMA configuration structure
 	GPDMACfg.ChannelNum = 0;								//choose channel 0
 	GPDMACfg.SrcMemAddr = (uint32_t)sin;					//source physical memory address
 	GPDMACfg.DstMemAddr = 0;								//blank destination memory address because it's not p2m

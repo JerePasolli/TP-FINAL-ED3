@@ -23,11 +23,31 @@ void gpioConfig(void){
     LPC_GPIO2 -> FIODIR &= ~(INPUT1);                               //keyboard inputs
     LPC_GPIO2 -> FIODIR &= ~(INPUT2);
     LPC_GPIO2 -> FIODIR &= ~(INPUT3);
-    LPC_GPIO2 -> FIODIR |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;   //keyboard outputs
-    LPC_GPIO2 -> FIOSET |= (0xF);                                   //set all the rows
-    LPC_PINCON -> PINMODE1 |= (1<<5);                               //led without pullup or pulldown
-    LPC_GPIO0 -> FIODIR |= (LED);                                   //set led pin as output 
-    LPC_GPIO0 -> FIOCLR |= 1;                                       //clear led
+
+    //P018 as digitsal output for led
+    LPC_GPIO0 -> FIODIR |= (1<<18);
+    LPC_PINCON -> PINMODE1 |= (1<<5);
+    LPC_GPIO0 -> FIOCLR |= (1<<18);
+    //numberpad outputs
+    LPC_GPIO2 -> FIODIR |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;
+
+    LPC_GPIO2 -> FIOSET |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;
+    LPC_GPIO2 -> FIOSET |= INPUT1 | INPUT2 | INPUT3;
+
+    return;
+}
+
+/*void gpioIntConfig(void){
+    //to do: check later edge
+    //GPIO interrupt configuration
+	//falling edge for inputs
+    LPC_GPIOINT -> IO0IntEnF |= INPUT1 | INPUT2 | INPUT3;
+
+    //clear flags
+    LPC_GPIOINT -> IO0IntClr |= INPUT1 | INPUT2 | INPUT3;
+    //enable interruption
+    NVIC_EnableIRQ(EINT3_IRQn);
+
     return;
 }*/
 
@@ -39,13 +59,16 @@ char readKeyboard(void) {
         {'*', '0', '#'}
     };
 
-    for (int row = 0; row < ROWS; row++) {                          //check which key has been pressed
-        LPC_GPIO2->FIOCLR |= ROW_PINS[row];                         //enable row
-        delay(10000);
-        for (int col = 0; col < COLS; col++) {                      //check columns
-            if (!(LPC_GPIO2->FIOPIN & COL_PINS[col])) {             //check if there are a key pressed in the selected column
-            	delay(10000000);
-                return keys[row][col];                              //return the key pressed
+    for (int row = 0; row < ROWS; row++) {
+        // row enable
+        LPC_GPIO2->FIOCLR |= ROW_PINS[row];
+        //delay(10000);
+
+        // check columns
+        for (int col = 0; col < COLS; col++) {
+            if (!(LPC_GPIO2->FIOPIN & COL_PINS[col])) {
+            	delay(1000000*4);
+                return keys[row][col];
             }
         }
         LPC_GPIO2->FIOSET |= ROW_PINS[row];                         // row disable

@@ -1,6 +1,8 @@
 #include "LPC17xx.h"
 #include "../inc/eint.h"
 
+//external interrupt setup
+
 void extIntConfig(void){
 	
     LPC_PINCON -> PINSEL4 |= (1<<20) | (1<<22);                     //set eint mode on pins 2.10 and 2.11
