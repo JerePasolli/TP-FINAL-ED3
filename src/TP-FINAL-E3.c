@@ -21,16 +21,17 @@
 #define RINGING 2
 #define EINT0 (1<<0)
 #define EINT1 (1<<1)
-volatile char password[4] = {'1','2','3','4'};
-volatile char inputPassword[4];
+volatile uint8_t password[4] = {'1','2','3','4'};
+volatile uint8_t inputPassword[4];
 //volatile char dataReceived[4];
-volatile char key;
+volatile uint8_t key;
 volatile uint8_t status = 0;
 volatile uint8_t statusChange = 0;
 uint8_t message1[] = "Alarm off";
 uint8_t message2[] = "Alarm on";
 uint8_t message3[] = "Alarm ringing";
-uint8_t received[] = "";
+uint8_t received[1] = "";
+uint8_t uartPassword[4];
 volatile uint8_t position = 0;
 volatile uint8_t incorrectPassword = 0;
 volatile uint16_t adc0Value;
@@ -140,6 +141,7 @@ void EINT1_IRQHandler(void){
 
 void UART2_IRQHandler(void){
 	uint32_t intsrc, tmp, tmp1;
+	static uint8_t counter;
 	intsrc = UART_GetIntId(LPC_UART2);
 	tmp = intsrc & UART_IIR_INTID_MASK;
 
@@ -153,6 +155,25 @@ void UART2_IRQHandler(void){
 
 	if((tmp == UART_IIR_INTID_RDA) || (tmp == UART_IIR_INTID_CTI)){
 		UART_Receive(LPC_UART2, received, sizeof(received), NONE_BLOCKING);
+		uartPassword[counter] = received[0];
+		counter ++;
+		if(counter == 4){
+			counter = 0;
+			for(uint8_t i = 0; i < 4; i++){
+				if(password[i] != uartPassword[i])
+					return;
+			}
+			if(status == OFF){
+				status = ACTIVE;
+			}
+			else{
+				status = OFF;
+				//GPDMA_ChannelCmd(0,DISABLE);
+				//DAC_UpdateValue(LPC_DAC, 0);
+			}
+			statusChange = 1;
+		}
+
 	}
 }
 
