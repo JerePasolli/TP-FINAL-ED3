@@ -1,4 +1,4 @@
-#include <../inc/timers.h>
+#include "../inc/timers.h"
 #include "LPC17xx.h"
 #include "lpc17xx_timer.h"
 

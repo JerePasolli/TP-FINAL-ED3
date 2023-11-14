@@ -101,7 +101,7 @@ int main(void) {
 
 void ADC_IRQHandler(void){
 	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;
-	if(adc0Value > 0x0x384){ 				//sensed from MQ135 aprox
+	if(adc0Value > 0x384){ 				//sensed from MQ135 aprox
 		if(status == ACTIVE){
 			status = RINGING;
 			statusChange = 1;
