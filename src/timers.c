@@ -47,7 +47,7 @@ void timerConfig(void){
 		TIM_ConfigMatch(LPC_TIM1, &matchCfg2);
 		TIM_Cmd(LPC_TIM1, ENABLE);
 		TIM_ClearIntPending(LPC_TIM1, TIM_MR1_INT);
-		NVIC_SetPriority(TIMER1_IRQn,5);
+		NVIC_SetPriority(TIMER1_IRQn, 0);
 		NVIC_EnableIRQ(TIMER1_IRQn);
 
 

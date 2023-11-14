@@ -13,6 +13,6 @@ void adcConfig(void){
 	LPC_ADC->ADGDR &= LPC_ADC->ADGDR;
 	ADC_EdgeStartConfig(LPC_ADC,ADC_START_ON_RISING);			//choose rising edge
 	ADC_IntConfig(LPC_ADC,ADC_ADINTEN0,SET);
-	NVIC_SetPriority(ADC_IRQn,0);
+	NVIC_SetPriority(ADC_IRQn, 2);
 	NVIC_EnableIRQ(ADC_IRQn);									//enable interruptions for adc in NVIC
 }
