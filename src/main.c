@@ -13,7 +13,6 @@
 #include "lpc17xx_dac.h"
 #include "lpc17xx_uart.h"
 #include "lpc17xx_timer.h"
-//#include "lpc17xx_"
 
 //Global Variables
 #define OFF 0
@@ -23,7 +22,6 @@
 #define EINT1 (1<<1)
 volatile uint8_t password[4] = {'1','2','3','4'};
 volatile uint8_t inputPassword[4];
-//volatile char dataReceived[4];
 volatile uint8_t key;
 volatile uint8_t status = 0;
 volatile uint8_t statusChange = 0;
@@ -33,51 +31,50 @@ uint8_t message3[] = "Alarm ringing";
 uint8_t message4[] = "Wrong Password";
 uint8_t received[1] = "";
 uint8_t uartPassword[4];
+volatile uint8_t movement = 0;
 volatile uint8_t position = 0;
 volatile uint8_t incorrectPassword = 0;
 volatile uint16_t adc0Value;
-//volatile uint32_t bytesReceived;
 //Functions
 void ADC_IRQHandler(void);
 void EINT0_IRQHandler(void);
 void EINT1_IRQHandler(void);
 void TIMER1_IRQHandler(void);
+void UART2_IRQHandler(void);
 
 int main(void) {
-
-    //initial settings
-	dacConfig();
-	dmaConfig();
     gpioConfig();
-    timerConfig();
     adcConfig();
+    timerConfig();
+    dacConfig();
+    dmaConfig();
     uartConfig();
     extIntConfig();
+	initTimer2();
 
     while(1){
-    	if((status == ACTIVE)||(status == RINGING)){
-    		LPC_GPIO0 -> FIOSET |= (1<<18);
+    	if((status == ACTIVE)||(status == RINGING)){				//if the alarm is active or ringing
+    		LPC_GPIO0 -> FIOSET |= 1;								//turn on the led
     	}
-    	else{
-    		LPC_GPIO0 -> FIOCLR |= (1<<18);
-		}
-
-
+    	else{														//if the alarm is off
+    		LPC_GPIO0 -> FIOCLR |= 1;								//turn off the led
+    	}
+    	
     	key = readKeyboard();
-		if (key != '\0') {
-			inputPassword[position] = key;
-			if (position == 3){
+		if (key != '\0') {											//ignore if null character
+			inputPassword[position] = key;							//save the key pressed
+			if (position == 3){										//check if correct at the end of the password
 				for(uint8_t i = 0; i < 4; i++){
 					if(inputPassword[i] != password[i]){
 						incorrectPassword = 1;
 					}
 				}
-				if(incorrectPassword){
+				if(incorrectPassword){				
 					incorrectPassword = 0;
 					UART_Send(LPC_UART2, message4, sizeof(message4), BLOCKING);
 				}
 				else{
-					if(status == OFF){
+					if(status == OFF){									//if the password is correct, turn on the alarm
 						status = ACTIVE;
 						UART_Send(LPC_UART2, message2, sizeof(message2), BLOCKING);
 					}
@@ -95,13 +92,18 @@ int main(void) {
 				position = 0;
 			}
 		}
+		sensorTrigger();
+		movement = echo_monitor();
+		if(movement){
+			status = RINGING;
+		}
     }
     return 0;
 }
 
 void ADC_IRQHandler(void){
 	adc0Value = ((LPC_ADC->ADDR0)>>4)&0xFFF;
-	if(adc0Value >= 0x384){ //  sensed from MQ135 aprox
+	if(adc0Value > 0x384){ 				//sensed from MQ135 aprox
 		if(status == ACTIVE){
 			status = RINGING;
 			//statusChange = 1;
@@ -109,20 +111,19 @@ void ADC_IRQHandler(void){
 		    GPDMA_ChannelCmd(0,ENABLE);
 		}
 	}
-	LPC_ADC->ADGDR &= LPC_ADC->ADGDR; // clean flag
+	LPC_ADC->ADGDR &= LPC_ADC->ADGDR; 		// clear flag
 	return;
 }
 
 //external interrupt on EINT0
 void EINT0_IRQHandler(void){
-    //insert code
 	if(status == ACTIVE){
 		status = RINGING;
 		//statusChange = 1;
 		UART_Send(LPC_UART2, message3, sizeof(message3), BLOCKING);
 		GPDMA_ChannelCmd(0,ENABLE);
 	}
-    LPC_SC -> EXTINT |= EINT0; //clearing flag
+    LPC_SC -> EXTINT |= EINT0; 				//clear flag
     return;
 }
 
@@ -134,8 +135,7 @@ void EINT1_IRQHandler(void){
 		UART_Send(LPC_UART2, message3, sizeof(message3), BLOCKING);
 		GPDMA_ChannelCmd(0,ENABLE);
 	}
-    //insert code
-	LPC_SC -> EXTINT |= EINT1; //clearing flag
+	LPC_SC -> EXTINT |= EINT1; 				//clear flag
     return;
 }
 
@@ -149,7 +149,7 @@ void UART2_IRQHandler(void){
 		tmp1 = UART_GetLineStatus(LPC_UART2);
 		tmp1 &= (UART_LSR_OE | UART_LSR_PE | UART_LSR_FE | UART_LSR_BI | UART_LSR_RXFE);
 		if(tmp1){
-			while(1); //codigo de manejo de error, para que no se clave aca
+			while(1); 						//UART error handling code
 		}
 	}
 
@@ -181,7 +181,7 @@ void UART2_IRQHandler(void){
 
 void TIMER1_IRQHandler(void){
 	if (statusChange){
-		if(status == OFF)
+		if(status == OFF )
 			UART_Send(LPC_UART2, message1, sizeof(message1), BLOCKING);
 		else if (status == ACTIVE)
 			UART_Send(LPC_UART2, message2, sizeof(message2), BLOCKING);
