@@ -1,7 +1,7 @@
 
 #include "LPC17xx.h"
-#include "gpio.h"
-#include "delay.h"
+#include "../inc/gpio.h"
+#include "../inc/delay.h"
 
 
 #define INPUT1 (1<<4)
@@ -30,18 +30,20 @@ void gpioConfig(void){
     LPC_GPIO2 -> FIODIR &= ~(INPUT2);
     LPC_GPIO2 -> FIODIR &= ~(INPUT3);
 
+    //P018 as digitsal output for led
     LPC_GPIO0 -> FIODIR |= (1<<18);
     LPC_PINCON -> PINMODE1 |= (1<<5);
     LPC_GPIO0 -> FIOCLR |= (1<<18);
     //numberpad outputs
     LPC_GPIO2 -> FIODIR |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;
 
-    LPC_GPIO2 -> FIOSET |= (0xF);
+    LPC_GPIO2 -> FIOSET |= OUTPUT1 | OUTPUT2 | OUTPUT3 | OUTPUT4;
+    LPC_GPIO2 -> FIOSET |= INPUT1 | INPUT2 | INPUT3;
 
     return;
 }
 
-void gpioIntConfig(void){
+/*void gpioIntConfig(void){
     //to do: check later edge
     //GPIO interrupt configuration
 	//falling edge for inputs
@@ -53,7 +55,7 @@ void gpioIntConfig(void){
     NVIC_EnableIRQ(EINT3_IRQn);
 
     return;
-}
+}*/
 
 char readKeyboard(void) {
     char keys[ROWS][COLS] = {
@@ -66,11 +68,12 @@ char readKeyboard(void) {
     for (int row = 0; row < ROWS; row++) {
         // row enable
         LPC_GPIO2->FIOCLR |= ROW_PINS[row];
+        //delay(10000);
 
         // check columns
         for (int col = 0; col < COLS; col++) {
             if (!(LPC_GPIO2->FIOPIN & COL_PINS[col])) {
-            	delay(10000000);
+            	delay(1000000*4);
                 return keys[row][col];
             }
         }
