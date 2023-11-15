@@ -31,7 +31,7 @@ void timerConfig(void){
 	TIM_ConfigMatch(LPC_TIM0, &matchCfg);
 	TIM_Cmd(LPC_TIM0, ENABLE);
 
-	TIM_TIMERCFG_Type timCfg2;
+	/*TIM_TIMERCFG_Type timCfg2;
 		timCfg2.PrescaleOption = TIM_PRESCALE_USVAL;
 		timCfg2.PrescaleValue = PRESCALER;
 
@@ -48,7 +48,7 @@ void timerConfig(void){
 		TIM_Cmd(LPC_TIM1, ENABLE);
 		TIM_ClearIntPending(LPC_TIM1, TIM_MR1_INT);
 		NVIC_SetPriority(TIMER1_IRQn, 0);
-		NVIC_EnableIRQ(TIMER1_IRQn);
+		NVIC_EnableIRQ(TIMER1_IRQn);*/
 
 
     return;
