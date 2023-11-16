@@ -6,8 +6,8 @@
 #define MATCHER_TIM_0 4
 #define PRESCALER_TIM_1 75000
 #define MATCHER_TIM_1 2
-#define PRESCALER_TIM_2 75000
-#define MATCHER_TIM_2 2
+#define PRESCALER_TIM_2 1000000
+#define MATCHER_TIM_2 4
 
 void timerConfig(void){
 	TIM_TIMERCFG_Type timCfg0;								//timer configuration structure
@@ -40,7 +40,25 @@ void timerConfig(void){
 
 	TIM_Init(LPC_TIM1, TIM_TIMER_MODE, &timCfg1);
 	TIM_ConfigMatch(LPC_TIM1, &matchCfg1);
+	NVIC_SetPriority(TIMER1_IRQn,1);
 	NVIC_EnableIRQ(TIMER1_IRQn);
+
+	TIM_TIMERCFG_Type timCfg2;
+	timCfg2.PrescaleOption = TIM_PRESCALE_USVAL;
+	timCfg2.PrescaleValue = PRESCALER_TIM_2;
+
+	TIM_MATCHCFG_Type matchCfg2;
+	matchCfg2.ExtMatchOutputType = TIM_EXTMATCH_NOTHING;
+	matchCfg2.MatchChannel = 1;
+	matchCfg2.MatchValue = MATCHER_TIM_2-1;
+	matchCfg2.IntOnMatch = ENABLE;
+	matchCfg2.ResetOnMatch = ENABLE;
+	matchCfg2.StopOnMatch = DISABLE;
+
+	TIM_Init(LPC_TIM2, TIM_TIMER_MODE, &timCfg2);
+	TIM_ConfigMatch(LPC_TIM2, &matchCfg2);
+	NVIC_SetPriority(TIMER2_IRQn,1);
+	NVIC_EnableIRQ(TIMER2_IRQn);
 
     return;
 }

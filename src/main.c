@@ -54,6 +54,7 @@ int main(void) {
     extIntConfig();
 
     while(1){
+
     	if((status == ACTIVE)||(status == RINGING)){				//if the alarm is active or ringing
     		LPC_GPIO0 -> FIOSET |= (1<<18);								//turn on the led
     	}
@@ -66,7 +67,7 @@ int main(void) {
 			LPC_GPIO0 -> FIOSET |= (1<<4);
 			TIM_Cmd(LPC_TIM1, ENABLE);
 			inputPassword[position] = key;							//save the key pressed
-
+			TIM_Cmd(LPC_TIM2, ENABLE);
 			if(inputPassword[position] == inputPassword[position-1])
 				if(inputPassword[position] == '*'){
 					status = RINGING;
@@ -152,6 +153,14 @@ void TIMER1_IRQHandler(void){
 	LPC_GPIO0 -> FIOCLR |= (1<<4);
 	TIM_Cmd(LPC_TIM1, DISABLE);
 	TIM_ClearIntPending(LPC_TIM1, TIM_MR1_INT);
+
+	return;
+}
+
+void TIMER2_IRQHandler(void){
+	position = 0;
+	TIM_Cmd(LPC_TIM2, DISABLE);
+	TIM_ClearIntPending(LPC_TIM2, TIM_MR1_INT);
 
 	return;
 }
