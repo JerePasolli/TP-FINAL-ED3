@@ -1,7 +1,7 @@
 #include "LPC17xx.h"
 #include "../inc/dma.h"
 #include "lpc17xx_gpdma.h"
-#include "../inc/alarm_sound.h"
+#include "../inc/alarm_sound_1.h"
 
 #define ARRAY_SIZE 24
 #define TRANSFER_SIZE 4095
